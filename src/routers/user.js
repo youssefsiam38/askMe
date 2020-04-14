@@ -119,6 +119,8 @@ router.patch('/:username/update', auth, async (req, res) => {
         for (let key in req.body) {
             if (validUpdates.includes(key)) 
                 user[key] = req.body[key]
+            else
+                throw { errMsg: `You can't update your ${key}`, status: 400 }
         }
         await user.save()
 
