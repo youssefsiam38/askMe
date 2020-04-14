@@ -1,0 +1,3 @@
+config/*
+!github.env
+node_modules

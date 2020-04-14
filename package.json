@@ -1,0 +1,20 @@
+{
+  "name": "ask-me",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "env-cmd -f config/dev.env node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mogodb": "0.0.1-security",
+    "mongoose": "^5.9.7",
+    "validator": "^13.0.0"
+  }
+}
