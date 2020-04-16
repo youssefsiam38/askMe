@@ -2,14 +2,15 @@ const User         = require('../db/models/User.js')
 const jwt          = require('jsonwebtoken')
 const errorHandler = require('../utils/errorHandler.js')
 
-const auth = async (req, res, next) => {
+const optionalAuth = async (req, res, next) => {
 
     try {
         let tokenWithBearer = req.header('Authorization')
         
-        if(!tokenWithBearer)
-            throw { errMsg: 'You are not logged in', status: 401 }
-
+        if(!tokenWithBearer){
+            return next()
+        }
+        
         const token = tokenWithBearer.replace('Bearer ', '')
         const { _id } = jwt.verify(token, process.env.JWT_SECRET)
         const user = await User.findById(_id)
@@ -27,4 +28,4 @@ const auth = async (req, res, next) => {
     }
 } 
 
-module.exports = auth
+module.exports = optionalAuth

@@ -1,10 +1,12 @@
-const express = require('express')
-const router = new express.Router()
-const User = require('../db/models/User.js')
-const Question = require('../db/models/Question.js')
-const errorHandler = require('../utils/errorHandler.js')
+const express         = require('express')
+const router          = new express.Router()
+const User            = require('../db/models/User.js')
+const Question        = require('../db/models/Question.js')
+const errorHandler    = require('../utils/errorHandler.js')
 const questionsGetter = require('../utils/questionsGetter.js')
-const auth = require('../middleWares/auth.js')
+const thereIsBlock    = require('../utils/thereIsBlock.js')
+const auth            = require('../middleWares/auth.js')
+const optionalAuth    = require('../middleWares/optionalAuth.js')
 
 
 // ask a question
@@ -14,7 +16,7 @@ router.post('/questions/ask/:askedTo', auth, async (req, res) => {
         const askedUser = await User.findOne({ username: req.params.askedTo })
 
         //check if user is found
-        if (!askedUser)
+        if (!askedUser || thereIsBlock(askedUser, req.user))
             throw { errMsg: 'user not found', status: 404 }
 
         if (req.user.username === askedUser.username)
@@ -84,7 +86,7 @@ router.get('/questions', auth, async (req, res) => {
             }
         }).exists('A', false)
 
-        if (questions == false)
+        if (!questions.length)
             throw { errMsg: 'Questions not found', status: 404 }
 
         const tempQuestions = []
@@ -106,7 +108,7 @@ router.get('/questions', auth, async (req, res) => {
 
 // get questions asked by or asked to specific User
 // LIKE --> {{url}}/questions/askedBy/mohamed
-router.get('/questions/:query/:username', questionsGetter)
+router.get('/questions/:query/:username', optionalAuth, questionsGetter)
 
 
 

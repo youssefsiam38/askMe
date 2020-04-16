@@ -1,8 +1,11 @@
-const express = require('express')
-const router = new express.Router()
-const User = require('../db/models/User.js')
-const auth = require('../middleWares/auth.js')
+const express      = require('express')
+const router       = new express.Router()
+const User         = require('../db/models/User.js')
+const auth         = require('../middleWares/auth.js')
+const optionalAuth = require('../middleWares/optionalAuth.js')
 const errorHandler = require('../utils/errorHandler.js')
+const thereIsBlock = require('../utils/thereIsBlock.js')
+
 
 //signup
 router.post('/signup', async (req, res) => {
@@ -44,9 +47,10 @@ router.post('/login', async (req, res) => {
 })
 
 // get all users
-router.get('/users', async (req, res) => {
+router.get('/users', optionalAuth, async (req, res) => {
     try {
 
+        // handling the query
         let parts, sortBy, order
         if(req.query.sortBy) {
             parts = req.query.sortBy.split(':')
@@ -57,7 +61,8 @@ router.get('/users', async (req, res) => {
             }
         }
 
-        const users = await User.find({}, null, {
+        // get the users
+        let users = await User.find({}, null, {
             limit: parseInt(req.query.limit),
             skip: parseInt(req.query.skip),
             sort: {
@@ -65,10 +70,12 @@ router.get('/users', async (req, res) => {
             }
         })
 
-        if(users == false)
-        throw { errMsg: 'There is no users', status: 404 }
+        if(!users.length)
+            throw { errMsg: 'There is no users', status: 404 }
 
-
+        //filter users if there is a block between requester and requested
+        users = users.filter((user) => !thereIsBlock(req.user, user))
+        
 
         const filteredUsers = []
         let tempUser
@@ -89,13 +96,13 @@ router.get('/users', async (req, res) => {
 })
 
 // get user info
-router.get('/:username/info', async (req, res) => {
+router.get('/users/info/:username', optionalAuth, async (req, res) => {
 
     try {
         let user = (await User.findOne({ username: req.params.username }))
         
         
-        if(!user)
+        if(!user || thereIsBlock(user, req.user))
             throw { errMsg: 'Username not found', status: 404}
         
 
@@ -107,8 +114,53 @@ router.get('/:username/info', async (req, res) => {
     }
 })
 
+
+// block user
+router.post('/users/block/:username', auth, async (req, res) => {
+
+    try {
+        const user = req.user
+
+        const blockedUser = await User.findOne({ username: req.params.username })
+
+        if(!blockedUser || req.user.username === blockedUser.username)
+            throw { errMsg: 'User not found', status: 404 }
+
+        user.blockList.push(blockedUser.username)
+
+        user.save()
+
+        res.send(blockedUser.emitToClient())
+    } catch (e) {
+        const error = errorHandler(e)
+        res.status(error.status).send({ Error: error.errMsg })
+    }
+})
+
+// unblock user
+router.post('/users/unblock/:username', auth, async (req, res) => {
+
+    try {
+        const user = req.user
+
+        const unBlockedUser = await User.findOne({ username: req.params.username })
+
+        if(!unBlockedUser)
+            throw { errMsg: 'User not found', status: 404 }
+
+        user.blockList = user.blockList.filter((username) => req.params.username !== username)
+
+        user.save()
+
+        res.send(unBlockedUser.emitToClient())
+    } catch (e) {
+        const error = errorHandler(e)
+        res.status(error.status).send({ Error: error.errMsg })
+    }
+})
+
 // update user
-router.patch('/:username/update', auth, async (req, res) => {
+router.patch('/users/update/:username', auth, async (req, res) => {
     try {
         const validUpdates = ['password', 'age']
         const user = req.user
@@ -136,7 +188,7 @@ router.patch('/:username/update', auth, async (req, res) => {
 
 })
 
-router.delete('/:username/delete', auth, async (req, res) => {
+router.delete('/users/delete/:username', auth, async (req, res) => {
     try {
         if (req.params.username !== req.user.username)
             throw { errMsg: 'You are trying to delete another user!!', status: 401 }

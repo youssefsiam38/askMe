@@ -1,5 +1,7 @@
 const Question     = require('../db/models/Question.js')
+const User         = require('../db/models/User.js')
 const errorHandler = require('../utils/errorHandler.js')
+const thereIsBlock = require('../utils/thereIsBlock.js')
 
 const questionsGetter = async (req, res) => {
     
@@ -10,6 +12,13 @@ const questionsGetter = async (req, res) => {
             sortBy= parts[0]
             order = parts[1]
         }
+
+        // get the asked user
+        const askedUser = await User.findOne({ username: req.params.username })
+
+        if(!askedUser || thereIsBlock(askedUser, req.user))
+            throw { errMsg: 'user not found', status: 404 }
+
 
         // check that the order is ASC or DESC
         const notAscOrDesc = req.query.sortBy && order !== 'asc' && order !== 'desc'
@@ -29,7 +38,7 @@ const questionsGetter = async (req, res) => {
             }
         }).exists('A')
             
-        if(questions == false)
+        if(!questions.length)
             throw { errMsg: 'Questions not found', status: 404 }
 
         const tempQuestions = []
