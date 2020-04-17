@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
 
         const token = await user.generateToken()
 
-        res.status(200).send({ user: user.emitToClient(), token })
+        res.send({ user: user.emitToClient(), token })
 
     } catch (e) {
         const error = errorHandler(e)

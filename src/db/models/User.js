@@ -44,7 +44,6 @@ const userSchema = new mongoose.Schema({
         type: [String],
         required: true,
         validate(value) {
-            // console.log(value)
             const lastToken = value[value.length - 1]
             if(!validator.isJWT(lastToken))
                 throw 'login has failed please try again'

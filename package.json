@@ -4,10 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f config/dev.env node src/index.js"
+    "start": "env-cmd -f config/dev.env node src/index.js",
+    "test": "env-cmd -f config/test.env jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
-  "author": "",
+  "author": "youssefsiam",
   "license": "ISC",
   "dependencies": {
     "env-cmd": "^10.1.0",
@@ -16,5 +20,9 @@
     "mogodb": "0.0.1-security",
     "mongoose": "^5.9.7",
     "validator": "^13.0.0"
+  },
+  "devDependencies": {
+    "jest": "^25.3.0",
+    "supertest": "^4.0.2"
   }
 }
