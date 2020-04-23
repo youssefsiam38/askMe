@@ -8,6 +8,13 @@ require('./db/mongoose.js')
 // app.use(express.static())
 app.use(express.json())
 
+
+if(process.env.dev)
+    app.use((req, res, next) => {
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        next()
+    })
+
 app.use(questionRouter)
 app.use(userRouter)
 
