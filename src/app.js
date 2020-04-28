@@ -9,9 +9,11 @@ require('./db/mongoose.js')
 app.use(express.json())
 
 
-if(process.env.dev)
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+        res.setHeader('Access-Control-Allow-Methods', '*')
+
         next()
     })
 
