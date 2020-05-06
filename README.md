@@ -1,6 +1,6 @@
 ### TL;DR
 
->This project is Askfm API clone to train my humble nodeJS knowledge
+>This project is Askfm API clone to improve my small nodeJS knowledge
 
 If you don't know how to setup your nodeJS environment <a href="#here" >continue</a>
 
