@@ -2,9 +2,12 @@ const express    = require('express')
 const app        = express()
 const userRouter = require('./routers/user.js')
 const questionRouter = require('./routers/question.js')
+const path   = require('path')
 require('./db/mongoose.js')
 
 
+
+app.use(express.static(path.join(__dirname, '../public')))
 // app.use(express.static())
 app.use(express.json())
 

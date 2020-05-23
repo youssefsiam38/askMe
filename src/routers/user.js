@@ -1,10 +1,14 @@
 const express      = require('express')
-const router       = new express.Router()
+const router       = express.Router()
 const User         = require('../db/models/User.js')
+const Question     = require('../db/models/Question.js')
 const auth         = require('../middleWares/auth.js')
 const optionalAuth = require('../middleWares/optionalAuth.js')
 const errorHandler = require('../utils/errorHandler.js')
 const thereIsBlock = require('../utils/thereIsBlock.js')
+const fs           = require('fs');
+const path         = require('path')
+const upload       = require('../middleWares/multer.js')
 
 
 //signup
@@ -41,6 +45,47 @@ router.post('/login', async (req, res) => {
         res.send({ user: user.emitToClient(), token })
 
     } catch (e) {
+        const error = errorHandler(e)
+        res.status(error.status).send({ Error: error.errMsg })
+    }
+})
+
+// add avatar
+
+router.post('/users/avatar', auth, upload.single('avatar'), async (req, res) => {
+    try {
+        res.sendStatus(200)
+    } catch (e) {
+        const error = errorHandler(e)
+        res.status(error.status).send({ Error: error.errMsg })
+    }
+
+})
+// delete avatar
+router.post('/users/delete/avatar', auth, async (req, res) => {
+    try {
+        const avatarsPath = path.join(__dirname, '../../public/avatars')
+        let deleted = false
+        await fs.readdir(avatarsPath, (error, files) => {
+            if (error) throw error
+
+            for(let file of files) {
+                let parts = file.split('.')
+                let extention = parts[parts.length - 1]
+                let withoutExtention = file.replace('.' + extention, '')
+                if(withoutExtention == req.user.username) {
+                    fs.unlinkSync(avatarsPath + '/' + file);
+                    deleted = true
+                    break
+                }
+            }
+            if(deleted)
+                res.sendStatus(200)
+            else
+                res.sendStatus(404)
+        });
+    } catch (err) {
+        // handle the error
         const error = errorHandler(e)
         res.status(error.status).send({ Error: error.errMsg })
     }
@@ -193,6 +238,9 @@ router.delete('/users/delete/:username', auth, async (req, res) => {
         if (req.params.username !== req.user.username)
             throw { errMsg: 'You are trying to delete another user!!', status: 401 }
         const user = await req.user.remove()
+        console.log(user)
+        const questions = await Question.deleteMany({ askedTo: user.username })
+        console.log(questions.deletedCount)
         res.send(user.emitToClient())
     } catch (e) {
         const error = errorHandler(e)
