@@ -42,7 +42,6 @@ const userSchema = new mongoose.Schema({
     },
     tokens: {
         type: [String],
-        required: true,
         validate(value) {
             const lastToken = value[value.length - 1]
             if(!validator.isJWT(lastToken))

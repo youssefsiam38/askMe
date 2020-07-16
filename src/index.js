@@ -1,6 +1,6 @@
 const app = require('./app.js')
 
-const port = process.env.PORT
+const port = parseInt(process.env.PORT)
 
 
 app.listen(port, () => {
