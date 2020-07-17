@@ -4,6 +4,8 @@ services:
   - mongodb
 
 before_install:
-- docker build -t youssefsiam38/askme .
-- docker run --network="host" -it youssefsiam38/askme npm run test
+    - docker build -t youssefsiam38/askme .
+
+script:
+    - docker run --network="host" -it youssefsiam38/askme npm run test
 
