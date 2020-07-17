@@ -2,10 +2,9 @@ language: node_js
 
 services:
   - docker
+  - mongodb
 
 before_install:
-- docker-compose up --build -d
-
-script:
-- npm run test
+- docker build -t youssefsiam38/node .
+- docker run --network="host" -it youssefsiam38/askme npm run test
 
