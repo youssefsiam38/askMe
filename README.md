@@ -1,6 +1,6 @@
-# TL;DR [![Build Status](https://travis-ci.org/youssefsiam38/askMe.svg?branch=master)](https://travis-ci.org/github/youssefsiam38/askMe)
+# TL;DR [![Build Status](https://api.travis-ci.org/youssefsiam38/askMe.svg?branch=master&status=passed)](https://travis-ci.org/github/youssefsiam38/askMe)
 
->This project is Askfm API clone to improve my small nodeJS knowledge
+>This project is Askfm API clone to improve my nodeJS knowledge
 
 If you don't know how to setup your nodeJS environment <a href="#here" >continue</a>
 
