@@ -3,9 +3,6 @@ services:
   - docker
   - mongodb
 
-env: 
-  - MONGOOSE_URL=mongodb://127.0.0.1:27017/askMeAPI PORT=80 JWT_SECRET=DO_NOT_LOOK_AT_ME MONGO_PASS=example MONGO_USERNAME=root
-
 before_install:
     - docker build -t youssefsiam38/askme .
 
