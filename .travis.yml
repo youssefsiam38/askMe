@@ -6,7 +6,7 @@ services:
 env: 
   - MONGOOSE_URL=mongodb://127.0.0.1:27017/askMeAPI
   - PORT=80
-  - JWT_SECRET=DON'T_LOOK_AT_ME
+  - JWT_SECRET=DO_NOT_LOOK_AT_ME
   - MONGO_PASS=example
   - MONGO_USERNAME=root
 
