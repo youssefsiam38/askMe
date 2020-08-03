@@ -10,6 +10,20 @@ const fs           = require('fs');
 const path         = require('path')
 const upload       = require('../middleWares/multer.js')
 
+// welcome message
+router.get('/', optionalAuth, async (req, res) => {
+
+    try {
+
+        res.send({Message: 'welcome'})
+        
+    } catch (e) {
+        const error = errorHandler(e)
+        res.status(error.status).send({ Error: error.errMsg })
+    }
+})
+
+
 
 //signup
 router.post('/signup', async (req, res) => {
