@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "env-cmd -f config/.env node src/index.js --unhandled-rejections=strict",
-    "test": "./node_modules/.bin/env-cmd -f config/.env jest --ci --detectOpenHandles --forceExit"
+    "test": "./node_modules/.bin/env-cmd -f config/.env jest --ci --detectOpenHandles --forceExit",
+    "test-travis": "jest --ci --detectOpenHandles --forceExit"
   },
   "jest": {
     "testEnvironment": "node"

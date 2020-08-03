@@ -3,9 +3,16 @@ services:
   - docker
   - mongodb
 
+env: 
+  - MONGOOSE_URL=mongodb://127.0.0.1:27017/askMeAPI
+  - PORT=80
+  - JWT_SECRET=DON'T_LOOK_AT_ME
+  - MONGO_PASS=example
+  - MONGO_USERNAME=root
+
 before_install:
     - docker build -t youssefsiam38/askme .
 
 script:
-    - docker run --network="host" -it youssefsiam38/askme npm run test
+    - docker run --network="host" -it youssefsiam38/askme npm run test-travis
 
